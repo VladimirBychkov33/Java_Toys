@@ -27,4 +27,47 @@ public class main {
             System.out.println(thing);
         }
     }
+
+    static void whatToy(List<shop_toys> toys) {
+        Scanner inputToy = new Scanner(System.in);
+        Boolean menu = true;
+        String choice;
+
+        String name = "";
+        int weight = 0;
+
+        while (menu) {
+
+            System.out.println("Введите число:");
+            System.out.println("1. Добавить игрушку для розыгрыша");
+            System.out.println("2. Список оставшихся игрушек");
+            System.out.println("3. Разыграть игрушку");
+            System.out.println("Для выхода - ввести любой символ");
+
+            choice = inputToy.nextLine();
+
+            switch (choice) {
+                
+                case "1": 
+                    System.out.print("Введите название новой игрушки: ");
+                    name = inputToy.nextLine();
+                    System.out.println("Введите вес игрушки (вероятность выпадения): " );
+                    weight = inputToy.nextInt();
+                    inputToy.nextLine();
+                    shop_toys newToy = new shop_toys(name, weight);
+                    toys.add(newToy);
+                    
+                    System.out.println("\nСписок игрушек на данный момент: ");
+                    showToys(toys);
+                    break;
+
+                
+
+                default:
+                    menu = false;
+                    inputToy.close();
+                    break;
+            }
+        }
+    }
 }
