@@ -4,9 +4,8 @@ import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
 
-public class main {
+public class main_copy {
     public static void main(String[] args) {
-        
         shop_toys toyOne = new shop_toys("Ship", 4);
         shop_toys toyTwo = new shop_toys("Soldier", 3);
         shop_toys toyThree = new shop_toys("Rabbit", 2);
@@ -18,8 +17,9 @@ public class main {
         toys.add(toyThree);
         toys.add(toyFour);
 
-        System.out.println(toys);
-
+        System.out.println("Список имеющихся игрушек для розыгрыша: ");
+        showToys(toys);
+        menuToy(toys);
     }
 
     static void showToys(List<shop_toys> toys) {
@@ -28,7 +28,7 @@ public class main {
         }
     }
 
-    static void whatToy(List<shop_toys> toys) {
+    static void menuToy(List<shop_toys> toys) {
         Scanner inputToy = new Scanner(System.in);
         Boolean menu = true;
         String choice;
@@ -60,9 +60,13 @@ public class main {
                     System.out.println("\nСписок игрушек на данный момент: ");
                     showToys(toys);
                     break;
-                case "2": 
-                    System.out.println("\nСписок игрушек: ");
-                    showToys(toys);
+
+                case "2":
+                    if (toys.size() == 0) System.out.println("\nИгрушки кончились\n");
+                    else {
+                        System.out.println("\nСписок игрушек: ");
+                        showToys(toys);
+                    }
                     break;
 
                 case "3": 
@@ -80,38 +84,47 @@ public class main {
                             }
                         }
                     }
-                    
-                    List<shop_toys> copycopyToys = new ArrayList<>();
-                    for (int i = 0; i < copyToys.size() / 2; i++) {
-                        copycopyToys.add(copyToys.get(i));
-                    }
-                    
-                    shop_toys prize = copycopyToys.get(random.nextInt(copycopyToys.size()));
-                    System.out.println("Выпала игрушка:");
-                    System.out.println(prize);
 
-                    for (shop_toys thing : toys) {
-                        if (thing.containsID(prize.getID())) {
-                            thing.getWeightToy();
-                            if (thing.getWeightToy() == 0) {
-                                toys.remove(thing);
+                    List<shop_toys> toysCopy = new ArrayList<>();
+                    for (int i = 0; i < copyToys.size() / 3 * 2; i++) {
+                        toysCopy.add(copyToys.get(i));
+                    }
+
+                    shop_toys prize; 
+                    if (toysCopy.size() == 1) prize = toysCopy.get(0);
+                    if (toysCopy.size() == 0) {
+                        System.out.println("\nИгрушки кончились :(\n");
+                        toys.clear();
+                    }
+                    else {
+                        prize = toysCopy.get(random.nextInt(toysCopy.size())); 
+                        System.out.println("\nВыпала игрушка:");
+                        System.out.println(prize);
+
+                        try (FileWriter fw = new FileWriter("listpriz.txt", true)) {
+                            fw.write(prize.toString());
+                            fw.write("\n");
+                            fw.close();
+                        } catch (Exception ex) {
+                            System.out.println("Что-то пошло не так");
+                        }
+                    
+                        for (shop_toys thing : toys) {
+                            if (thing.containsID(prize.getID())) {
+                                int w = thing.getWeightToy();
+                                w--;
+                                thing.setWeight(w);
+                                if (thing.getWeightToy() == 0) toys.remove(thing);
+                                break;
                             }
                         }
+
+                        System.out.println("\nОстались игрушки: ");
+                        showToys(toys);
                     }
 
-                    try (FileWriter fw = new FileWriter("listpriz.txt", false)) {
-                        fw.write(prize.toString());
-                        fw.close();
-                    } catch (Exception ex) {
-                        System.out.println("Что-то пошло не так");
-                    }
-
-                    System.out.println("\nОстались игрушки: ");
-                    showToys(toys);
                     break;
-
                 
-
                 default:
                     menu = false;
                     inputToy.close();
